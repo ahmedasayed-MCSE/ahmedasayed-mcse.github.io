@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1f2122">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="صفارة الكلاب">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>صفارة الكلاب — درّب كلبك</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI","Tahoma","Arial",sans-serif;}
+  body{
+    background:linear-gradient(180deg,#3a5a2b 0%,#2d4621 100%);
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    padding:24px 16px;color:#fff;
+  }
+  .hero{text-align:center;margin-bottom:20px;}
+  .hero h1{font-size:34px;font-weight:300;margin:0 0 6px;}
+  .hero p{font-size:16px;font-weight:300;margin:0;opacity:.9;}
+  .screen{
+    width:100%;max-width:380px;background:#1f2122;border-radius:16px;
+    padding:28px 24px;display:flex;flex-direction:column;align-items:center;gap:20px;
+    box-shadow:0 20px 60px rgba(0,0,0,.4);
+  }
+  .top{align-self:flex-start;color:#cfd1d2;font-size:14px;font-weight:500;}
+  .freq{color:#fff;font-size:46px;font-weight:300;line-height:1;text-align:center;direction:ltr;}
+  .dial{position:relative;width:260px;height:260px;}
+  .dial svg{position:absolute;inset:0;width:100%;height:100%;}
+  .btn{
+    width:110px;height:110px;border-radius:50%;border:3px solid #fff;background:transparent;
+    cursor:pointer;color:#fff;font-size:15px;font-weight:600;
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    transition:background .15s,border-color .15s;font-family:inherit;
+  }
+  .btn:hover{background:rgba(255,255,255,.08);}
+  .btn.on{background:#7fb02a;border-color:#7fb02a;}
+  .row{display:flex;align-items:center;gap:12px;width:100%;color:#cfd1d2;font-size:14px;}
+  .row label{min-width:60px;}
+  .row input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:#3a3c3d;border-radius:2px;outline:none;direction:ltr;}
+  .row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#7fb02a;cursor:pointer;border:none;}
+  .row input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#7fb02a;cursor:pointer;border:none;}
+  .out{min-width:54px;text-align:left;color:#fff;font-weight:500;direction:ltr;}
+  .presets{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;width:100%;}
+  .pre{padding:7px 11px;border:1px solid rgba(255,255,255,.22);background:transparent;color:#cfd1d2;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit;transition:background .15s,color .15s;}
+  .pre:hover,.pre.active{background:rgba(127,176,42,.2);color:#fff;border-color:#7fb02a;}
+  .note{margin-top:18px;font-size:13px;text-align:center;max-width:380px;line-height:1.7;opacity:.9;}
+  .footer{margin-top:24px;font-size:12px;opacity:.6;text-align:center;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>درّب كلبك</h1>
+  <p>ترددات تصل إلى 22 كيلوهرتز</p>
+</div>
+
+<div class="screen">
+  <div class="top">صفارة الكلاب</div>
+  <div class="freq" id="freqLabel">15.0 kHz</div>
+
+  <div class="dial">
+    <svg viewBox="0 0 260 260">
+      <circle cx="130" cy="130" r="110" fill="none" stroke="#3a3c3d" stroke-width="11"/>
+      <circle id="arc" cx="130" cy="130" r="110" fill="none" stroke="#7fb02a" stroke-width="11"
+              stroke-linecap="round" transform="rotate(-90 130 130)"
+              stroke-dasharray="691.15" stroke-dashoffset="172"/>
+    </svg>
+    <button class="btn" id="playBtn">تشغيل</button>
+  </div>
+
+  <div class="row">
+    <label for="freq">التردد</label>
+    <input type="range" id="freq" min="100" max="22000" step="10" value="15000">
+  </div>
+  <div class="row">
+    <label for="vol">الصوت</label>
+    <input type="range" id="vol" min="0" max="100" step="1" value="30">
+    <span class="out" id="volOut">30%</span>
+  </div>
+
+  <div class="presets">
+    <button class="pre" data-f="1000">1 kHz</button>
+    <button class="pre" data-f="8000">8 kHz</button>
+    <button class="pre" data-f="12000">12 kHz</button>
+    <button class="pre" data-f="15000">15 kHz</button>
+    <button class="pre" data-f="17000">17 kHz</button>
+    <button class="pre" data-f="19000">19 kHz</button>
+    <button class="pre" data-f="22000">22 kHz</button>
+  </div>
+</div>
+
+<p class="note">
+  استخدم سماعات الرأس أو مكبر صوت خارجي للحصول على ترددات نقية.
+  ابدأ بمستوى صوت منخفض — الترددات العالية قد تُزعج الحيوانات والأشخاص القريبين.
+</p>
+<div class="footer">واجهة Web Audio API · مولّد موجة جيبية نقية</div>
+
+<script>
+(function(){
+  var ctx=null,osc=null,gain=null,playing=false;
+  var freq=document.getElementById('freq');
+  var vol=document.getElementById('vol');
+  var volOut=document.getElementById('volOut');
+  var label=document.getElementById('freqLabel');
+  var btn=document.getElementById('playBtn');
+  var arc=document.getElementById('arc');
+  var CIRC=2*Math.PI*110;
+  function fmt(f){return f>=1000?(f/1000).toFixed(1)+' kHz':Math.round(f)+' Hz';}
+  function update(){
+    var f=Number(freq.value);
+    label.textContent=fmt(f);
+    arc.setAttribute('stroke-dashoffset',CIRC*(1-(f-100)/21900));
+    if(osc) osc.frequency.setValueAtTime(f,ctx.currentTime);
+    document.querySelectorAll('.pre').forEach(function(b){b.classList.toggle('active',Number(b.dataset.f)===f);});
+  }
+  function updateVol(){
+    var v=Number(vol.value);
+    volOut.textContent=v+'%';
+    if(gain) gain.gain.setValueAtTime(v/100*0.5,ctx.currentTime);
+  }
+  function start(){
+    if(!ctx) ctx=new(window.AudioContext||window.webkitAudioContext)();
+    if(ctx.state==='suspended') ctx.resume();
+    osc=ctx.createOscillator(); gain=ctx.createGain();
+    osc.type='sine'; osc.frequency.value=Number(freq.value);
+    gain.gain.value=0;
+    gain.gain.linearRampToValueAtTime(Number(vol.value)/100*0.5,ctx.currentTime+0.05);
+    osc.connect(gain).connect(ctx.destination); osc.start();
+    playing=true; btn.classList.add('on'); btn.textContent='إيقاف';
+  }
+  function stop(){
+    if(gain&&ctx){gain.gain.cancelScheduledValues(ctx.currentTime);gain.gain.setValueAtTime(gain.gain.value,ctx.currentTime);gain.gain.linearRampToValueAtTime(0,ctx.currentTime+0.05);}
+    var _o=osc,_g=gain;
+    setTimeout(function(){try{if(_o){_o.stop();_o.disconnect();}if(_g)_g.disconnect();}catch(e){}},80);
+    osc=null;gain=null;playing=false;btn.classList.remove('on');btn.textContent='تشغيل';
+  }
+  btn.addEventListener('click',function(){playing?stop():start();});
+  freq.addEventListener('input',update);
+  vol.addEventListener('input',updateVol);
+  document.querySelectorAll('.pre').forEach(function(b){b.addEventListener('click',function(){freq.value=b.dataset.f;update();});});
+  document.addEventListener('visibilitychange',function(){if(document.hidden&&playing)stop();});
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',function(){
+      navigator.serviceWorker.register('sw.js').catch(function(){});
+    });
+  }
+  update();
+})();
+</script>
+</body>
+</html>
